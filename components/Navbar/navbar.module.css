@@ -1,0 +1,36 @@
+.nav {
+  display: flex;
+  padding: 0 10px;
+  padding-top: 10px;
+  padding-left: 0;
+  gap: 10px;
+  box-sizing: border-box;
+}
+
+.login {
+  width: 300px;
+  flex-shrink: 0;
+  padding: 5px;
+  background-color: #ffffff;
+  border-radius: 0 10px 10px 0;
+  text-align: center;
+  color: #799EFF;
+}
+
+.search {
+  flex: 1 1 0;
+  padding: 5px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  color: #799EFF;
+}
+
+.msg {
+  width: 100px;
+  flex-shrink: 0;
+  padding: 5px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  text-align: center;
+  color: #799EFF;
+}
