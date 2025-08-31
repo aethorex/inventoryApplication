@@ -1,21 +1,61 @@
 import styles from "./page.module.css";
-import DashBoard from "@/components/dashBoard/dashBoard";
+import Link from "next/link";
+import AddCostumerDetail from "@/components/AddCostumerDetail/addCostumerDetail";
 
 export default function Home() {
   return (
-    <main className={styles.main}>
-      <div className={styles.sideMenu}>
-        <ul>
-          <li>Dashboard</li>
-          <li>Products</li>
-          <li>Stock</li>
-          <li>Reports</li>
-          <li>Settings</li>
-        </ul>
-      </div>
+    <>
       <div className={styles.content}>
-        <DashBoard />
+        <div className={styles.mainContainer}>
+          <div className={styles.card}>
+            <div className={styles.cardHeader}>
+              <span className={styles.cardIcon}>📦</span>
+              <h2 className={styles.cardTitle}>Total Products</h2>
+            </div>
+            <div className={styles.cardValue}>10</div>
+          </div>
+
+          {/* Low Stock Items */}
+          <div className={`${styles.card} ${styles.lowStockCard}`}>
+            <div className={styles.cardHeader}>
+              <span className={styles.cardIcon}>🏷️</span>
+              <h2 className={styles.cardTitle}>Low Stock Items</h2>
+            </div>
+            <div className={styles.cardValue}>8</div>
+            <div className={styles.cardAlert}>
+              <span className={styles.alertIcon}>⚠️</span>
+              <span>3 items critically low!</span>
+            </div>
+          </div>
+
+          {/* Total Stock Value */}
+          <div className={`${styles.card} ${styles.totalStock}`}>
+            <div className={styles.cardHeader}>
+              <span className={styles.cardIcon}>💰</span>
+              <h2 className={styles.cardTitle}>Total Stock Value</h2>
+            </div>
+            <div className={styles.cardValue}>value</div>
+          </div>
+
+          <div className={`${styles.card} ${styles.totalStock}`}>
+            <div className={styles.cardHeader}>
+              <span className={styles.cardIcon}>💰</span>
+              <h2 className={styles.cardTitle}>Total Stock Value</h2>
+            </div>
+            <div className={styles.cardValue}>value</div>
+          </div>
+        </div>
+
+        <div className={styles.recentOrderAndLowItems}>
+          <div className={styles.recentOrder}>
+            <h1>Recent order of costumer</h1>
+            <AddCostumerDetail />
+          </div>
+          <div className={styles.lowItems}>
+            <h1>Low items in your shop</h1>
+          </div>
+        </div>
       </div>
-    </main>
+    </>
   );
 }

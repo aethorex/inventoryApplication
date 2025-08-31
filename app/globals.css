@@ -7,3 +7,9 @@
 body {
   background-color: #799EFF;
 }
+
+main {
+  display: flex;
+  height: calc(100vh - 48px);
+  gap: 10px;
+}
