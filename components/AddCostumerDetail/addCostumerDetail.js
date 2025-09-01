@@ -10,6 +10,7 @@ export default function AddCostumerDetail() {
     console.log(data);
   };
 
+
   return (
     <div className={styles.background}>
       <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
