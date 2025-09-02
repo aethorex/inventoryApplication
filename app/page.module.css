@@ -18,7 +18,6 @@
 .mainContainer {
   gap: 20px;
   display: flex;
-  border: 1px solid black;
   width: 90%;
   align-items: stretch;
 }
@@ -54,20 +53,23 @@
 }
 
 .recentOrderAndLowItems {
-  border: 1px solid black;
   width: 90%;
   height: 60%;
   display: flex;
+  gap: 5%;
 }
 
 .recentOrder {
   height: 100%;
-  width: 50%;
-  border: 1px solid red;
+  width: 47.5%;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0px 25px rgba(0, 0, 0, 0.1);
+  padding: 10px;
 }
 
 .recentOrder h1 {
@@ -76,13 +78,34 @@
 
 .lowItems {
   height: 100%;
-  width: 50%;
-  border: 1px solid green;
+  width: 47.5%;
   display: flex;
   align-items: center;
   flex-direction: column;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0px 25px rgba(0, 0, 0, 0.1);
+  padding: 10px;
 }
 
 .lowItems h1 {
   font-size: 1.5rem;
+}
+
+.recentOrder button {
+  background-color: green;
+  border: none;
+  border-radius: 10px;
+  padding: 7px;
+  transition: transform 0.5s ease;
+}
+
+.recentOrder button:hover {
+   transform: scale(1.1);
+   cursor: pointer;
+}
+
+.recentOrder button i {
+  color: white;
+  font-size: 13px;
 }

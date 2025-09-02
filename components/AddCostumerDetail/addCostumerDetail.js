@@ -3,16 +3,15 @@
 import styles from "./addCostumerDetail.module.css";
 import { useForm } from "react-hook-form";
 
-export default function AddCostumerDetail() {
+export default function AddCostumerDetail({ isVisible, setIsVisible }) {
   const { register, handleSubmit } = useForm();
 
   const onSubmit = (data) => {
-    console.log(data);
+    setIsVisible(false);
   };
 
-
   return (
-    <div className={styles.background}>
+    <div className={styles.background} onClick={() => setIsVisible(false)}>
       <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
         <input
           placeholder="Enter costumer name"
@@ -51,7 +50,9 @@ export default function AddCostumerDetail() {
           />
           <label htmlFor="delivered"> Delivered</label>
         </div>
-        <button type="submit" className={styles.button}>Submit</button>
+        <button type="submit" className={styles.button}>
+          Submit
+        </button>
       </form>
     </div>
   );

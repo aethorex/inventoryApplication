@@ -1,8 +1,11 @@
+"use client";
 import styles from "./page.module.css";
-import Link from "next/link";
 import AddCostumerDetail from "@/components/AddCostumerDetail/addCostumerDetail";
+import { useState } from "react";
 
 export default function Home() {
+  const [isVisible, setIsVisible] = useState(false);
+
   return (
     <>
       <div className={styles.content}>
@@ -48,8 +51,18 @@ export default function Home() {
 
         <div className={styles.recentOrderAndLowItems}>
           <div className={styles.recentOrder}>
-            <h1>Recent order of costumer</h1>
-            <AddCostumerDetail />
+            <h1 className={styles.recentOrders}>
+              Recent Order of Costumer{"  "}
+              <button onClick={() => setIsVisible(true)}>
+                <i className="fa-solid fa-cart-plus"></i>
+              </button>
+            </h1>
+            {isVisible && (
+              <AddCostumerDetail
+                isVisible={isVisible}
+                setIsVisible={setIsVisible}
+              />
+            )}
           </div>
           <div className={styles.lowItems}>
             <h1>Low items in your shop</h1>
