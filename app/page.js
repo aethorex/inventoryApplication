@@ -53,8 +53,19 @@ export default function Home() {
           <div className={styles.recentOrder}>
             <h1 className={styles.recentOrders}>
               Recent Order of Costumer{"  "}
-              <button onClick={() => setIsVisible(true)}>
-                <i className="fa-solid fa-cart-plus"></i>
+              <button className={styles.button} onClick={() => setIsVisible(true)}>
+                <span className={styles.spanmother}>
+                  <span>A</span>
+                  <span>d</span>
+                  <span>d</span>
+                </span>
+                <span className={styles.spanmother2}>
+                  <span>O</span>
+                  <span>r</span>
+                  <span>d</span>
+                  <span>e</span>
+                  <span>r</span>
+                </span>
               </button>
             </h1>
             {isVisible && (
@@ -63,6 +74,49 @@ export default function Home() {
                 setIsVisible={setIsVisible}
               />
             )}
+            <div className={styles.ordersOfClient}>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Abhi</td>
+                    <td>500</td>
+                    <td>Delivered</td>
+                  </tr>
+                  <tr>
+                    <td>Ravi</td>
+                    <td>1200</td>
+                    <td>To be Delivered</td>
+                  </tr>
+                  <tr>
+                    <td>Priya</td>
+                    <td>750</td>
+                    <td>Delivery in Progress</td>
+                  </tr>
+                  <tr>
+                    <td>Abhi</td>
+                    <td>500</td>
+                    <td>Delivered</td>
+                  </tr>
+                  <tr>
+                    <td>Ravi</td>
+                    <td>1200</td>
+                    <td>To be Delivered</td>
+                  </tr>
+                  <tr>
+                    <td>Priya</td>
+                    <td>750</td>
+                    <td>Delivery in Progress</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
           <div className={styles.lowItems}>
             <h1>Low items in your shop</h1>

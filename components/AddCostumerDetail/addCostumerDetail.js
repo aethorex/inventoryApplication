@@ -6,15 +6,33 @@ import { useForm } from "react-hook-form";
 export default function AddCostumerDetail({ isVisible, setIsVisible }) {
   const { register, handleSubmit } = useForm();
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     setIsVisible(false);
-  };
+
+    //fetch
+    const res = await fetch("/api/orders", {
+      method: "POST",
+      headers: { //object sets HTTP headers for your response.
+        "Content-Type": "application/json",  //tells the browser (or client) that the response body is JSON.
+      },
+      body: JSON.stringify(data),
+    });
+    const result = await res.json();
+    if (result.success) {
+      console.log("data gone successfully");
+      console.log(result.allData);
+    }
+  }
 
   return (
     <div className={styles.background} onClick={() => setIsVisible(false)}>
-      <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className={styles.form}
+        onSubmit={handleSubmit(onSubmit)}
+        onClick={(e) => e.stopPropagation()} //! StopPropagation is doing here -> stopping any event on CLICK in from.
+      >
         <input
-          placeholder="Enter costumer name"
+          placeholder="Enter customer name"
           className={styles.input}
           type="text"
           {...register("name")}
@@ -23,7 +41,7 @@ export default function AddCostumerDetail({ isVisible, setIsVisible }) {
           placeholder="Amount"
           className={styles.input}
           type="number"
-          {...register("number")}
+          {...register("amount")}
         />
         <div className={styles.status}>
           <input
