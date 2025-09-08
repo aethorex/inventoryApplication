@@ -13,11 +13,13 @@ export async function POST(request) {
     const collection = db.collection("orders");
 
     const data = await request.json();
-    await collection.insertOne(data);
+    if (data.name === "" || data.amount === "" || data.status === "") {
+      console.log("Fill all orders details");
+    } else {
+      await collection.insertOne(data);
+    }
 
-    const allData = await collection.find().toArray();
-
-    return NextResponse.json({ success: true, allData }); // Next response is a class of (server)--> a library of nextjs handling server side functions.
+    return NextResponse.json({ success: true }); // Next response is a class of (server)--> a library of nextjs handling server side functions.
   } catch (error) {
     console.error("Error parsing request:", error);
     return NextResponse.json({ success: false });

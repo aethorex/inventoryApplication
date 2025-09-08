@@ -3,7 +3,11 @@
 import styles from "./addCostumerDetail.module.css";
 import { useForm } from "react-hook-form";
 
-export default function AddCostumerDetail({ isVisible, setIsVisible }) {
+export default function AddCostumerDetail({
+  isVisible,
+  setIsVisible,
+  fetchOrders,
+}) {
   const { register, handleSubmit } = useForm();
 
   const onSubmit = async (data) => {
@@ -12,17 +16,17 @@ export default function AddCostumerDetail({ isVisible, setIsVisible }) {
     //fetch
     const res = await fetch("/api/orders", {
       method: "POST",
-      headers: { //object sets HTTP headers for your response.
-        "Content-Type": "application/json",  //tells the browser (or client) that the response body is JSON.
+      headers: {
+        //object sets HTTP headers for your response.
+        "Content-Type": "application/json", //tells the browser (or client) that the response body is JSON.
       },
       body: JSON.stringify(data),
     });
-    const result = await res.json();
-    if (result.success) {
+    if (res.ok) {
       console.log("data gone successfully");
-      console.log(result.allData);
     }
-  }
+    fetchOrders();
+  };
 
   return (
     <div className={styles.background} onClick={() => setIsVisible(false)}>

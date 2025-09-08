@@ -242,3 +242,7 @@
 .ordersOfClient table thead th {
   border-radius: 5px;
 }
+
+.statusOfOrder {
+  cursor: pointer;
+}

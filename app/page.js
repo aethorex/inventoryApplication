@@ -1,10 +1,31 @@
 "use client";
 import styles from "./page.module.css";
 import AddCostumerDetail from "@/components/AddCostumerDetail/addCostumerDetail";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Home() {
   const [isVisible, setIsVisible] = useState(false);
+  const [orders, setOrders] = useState([]); // orders = array
+
+  const fetchOrders = async () => {
+    try {
+      const res = await fetch("./api/getOrders"); // automatically calls GET
+      const data = await res.json();
+      if (data.success) {
+        setOrders(data.allData);
+      }
+    } catch (err) {
+      console.error("Error fetching orders:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  useEffect(() => {
+    console.log(orders);
+  }, [orders]);
 
   return (
     <>
@@ -53,7 +74,10 @@ export default function Home() {
           <div className={styles.recentOrder}>
             <h1 className={styles.recentOrders}>
               Recent Order of Costumer{"  "}
-              <button className={styles.button} onClick={() => setIsVisible(true)}>
+              <button
+                className={styles.button}
+                onClick={() => setIsVisible(true)}
+              >
                 <span className={styles.spanmother}>
                   <span>A</span>
                   <span>d</span>
@@ -72,6 +96,7 @@ export default function Home() {
               <AddCostumerDetail
                 isVisible={isVisible}
                 setIsVisible={setIsVisible}
+                fetchOrders={fetchOrders}
               />
             )}
             <div className={styles.ordersOfClient}>
@@ -84,36 +109,39 @@ export default function Home() {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>Abhi</td>
-                    <td>500</td>
-                    <td>Delivered</td>
-                  </tr>
-                  <tr>
-                    <td>Ravi</td>
-                    <td>1200</td>
-                    <td>To be Delivered</td>
-                  </tr>
-                  <tr>
-                    <td>Priya</td>
-                    <td>750</td>
-                    <td>Delivery in Progress</td>
-                  </tr>
-                  <tr>
-                    <td>Abhi</td>
-                    <td>500</td>
-                    <td>Delivered</td>
-                  </tr>
-                  <tr>
-                    <td>Ravi</td>
-                    <td>1200</td>
-                    <td>To be Delivered</td>
-                  </tr>
-                  <tr>
-                    <td>Priya</td>
-                    <td>750</td>
-                    <td>Delivery in Progress</td>
-                  </tr>
+                  {orders.map((order) => (
+                    <tr key={order._id}>
+                      <td>{order.name}</td>
+                      <td>{order.amount}</td>
+                      <td>
+                        {order.status}{" "}
+                        <span
+                          className={styles.statusOfOrder}
+                          onClick={() => setIsVisible(true)}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            width="28"
+                            height="28"
+                            role="img"
+                            aria-labelledby="swapTitle"
+                          >
+                            <title id="swapTitle">Change Status</title>
+                            <path
+                              d="M7 7h11l-4-4m4 14H7l4 4"
+                              stroke="currentColor"
+                              fill="none"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                            Change Status
+                          </svg>
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
