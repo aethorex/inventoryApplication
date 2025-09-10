@@ -12,9 +12,6 @@ export default function SideMenu() {
           <Link href="/products">Products</Link>
         </li>
         <li>
-          <Link href="/stocks">Stock</Link>
-        </li>
-        <li>
           <Link href="/report">Report</Link>
         </li>
         <li>

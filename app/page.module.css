@@ -246,3 +246,12 @@
 .statusOfOrder {
   cursor: pointer;
 }
+
+.statusOfOrder svg {
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.statusOfOrder svg:hover{
+  background-color: rgba(0, 0, 0, 0.2);
+}

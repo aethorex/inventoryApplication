@@ -1,9 +1,11 @@
 .sideMenu {
   width: 310px;
-  height: calc(100vh - 48px);
+  height: calc(100vh - 58px);
   display: flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
+  overflow-y: auto;
 }
 
 .sideMenu ul {
@@ -35,6 +37,5 @@
 }
 
 .sideMenu ul li a:hover {
-  scale: 1.05;
   transform: translateY(-5px);
 }

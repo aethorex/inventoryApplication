@@ -1,13 +1,18 @@
 "use client";
 import styles from "./page.module.css";
 import AddCostumerDetail from "@/components/AddCostumerDetail/addCostumerDetail";
+import ChangeStatus from "@/components/changeStatus/ChangeStatus";
 import { useState, useEffect } from "react";
 
 export default function Home() {
-  const [isVisible, setIsVisible] = useState(false);
+  const [addIsVisible, setAddIsVisible] = useState(false);
+  const [changeIsVisible, setChangeIsVisible] = useState(false);
   const [orders, setOrders] = useState([]); // orders = array
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const fetchOrders = async () => {
+    setLoading(true);
     try {
       const res = await fetch("./api/getOrders"); // automatically calls GET
       const data = await res.json();
@@ -16,6 +21,8 @@ export default function Home() {
       }
     } catch (err) {
       console.error("Error fetching orders:", err);
+    } finally {
+      setLoading(false); // stop loading
     }
   };
 
@@ -76,7 +83,7 @@ export default function Home() {
               Recent Order of Costumer{"  "}
               <button
                 className={styles.button}
-                onClick={() => setIsVisible(true)}
+                onClick={() => setAddIsVisible(true)}
               >
                 <span className={styles.spanmother}>
                   <span>A</span>
@@ -92,58 +99,73 @@ export default function Home() {
                 </span>
               </button>
             </h1>
-            {isVisible && (
+            {addIsVisible && (
               <AddCostumerDetail
-                isVisible={isVisible}
-                setIsVisible={setIsVisible}
+                addIsVisible={addIsVisible}
+                setAddIsVisible={setAddIsVisible}
                 fetchOrders={fetchOrders}
               />
             )}
+            {changeIsVisible && (
+              <ChangeStatus
+                changeIsVisible={changeIsVisible}
+                setChangeIsVisible={setChangeIsVisible}
+                fetchOrders={fetchOrders}
+                itemID={selectedOrderId}
+              />
+            )}
             <div className={styles.ordersOfClient}>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Amount</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {orders.map((order) => (
-                    <tr key={order._id}>
-                      <td>{order.name}</td>
-                      <td>{order.amount}</td>
-                      <td>
-                        {order.status}{" "}
-                        <span
-                          className={styles.statusOfOrder}
-                          onClick={() => setIsVisible(true)}
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            width="28"
-                            height="28"
-                            role="img"
-                            aria-labelledby="swapTitle"
-                          >
-                            <title id="swapTitle">Change Status</title>
-                            <path
-                              d="M7 7h11l-4-4m4 14H7l4 4"
-                              stroke="currentColor"
-                              fill="none"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                            Change Status
-                          </svg>
-                        </span>
-                      </td>
+              {loading ? (
+                <></>
+              ) : (
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Amount</th>
+                      <th>Status</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {orders.map((order) => (
+                      <tr key={order._id}>
+                        <td>{order.name}</td>
+                        <td>{order.amount}</td>
+                        <td>
+                          {order.status}{" "}
+                          <span
+                            className={styles.statusOfOrder}
+                            onClick={() => {
+                              setChangeIsVisible(true);
+                              setSelectedOrderId(order._id);
+                            }}
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 24 24"
+                              width="28"
+                              height="20"
+                              role="img"
+                              aria-labelledby="swapTitle"
+                            >
+                              <title id="swapTitle">Change Status</title>
+                              <path
+                                d="M7 7h11l-4-4m4 14H7l4 4"
+                                stroke="currentColor"
+                                fill="none"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                              Change Status
+                            </svg>
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
           <div className={styles.lowItems}>

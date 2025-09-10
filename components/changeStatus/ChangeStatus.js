@@ -1,26 +1,32 @@
 "use client";
 
-import styles from "./addCostumerDetail.module.css";
+import styles from "./changeStatus.module.css";
 import { useForm } from "react-hook-form";
 
-export default function AddCostumerDetail({
-  addIsVisible,
-  setAddIsVisible,
+export default function ChangeStatus({
+  changeIsVisible,
+  setChangeIsVisible,
   fetchOrders,
+  itemID,
 }) {
   const { register, handleSubmit } = useForm();
 
   const onSubmit = async (data) => {
-    setAddIsVisible(false);
+    setChangeIsVisible(false);
+
+    const payload = {
+      ...data,
+      itemID,
+    };
 
     //fetch
-    const res = await fetch("/api/orders", {
+    const res = await fetch("/api/update", {
       method: "POST",
       headers: {
         //object sets HTTP headers for your response.
         "Content-Type": "application/json", //tells the browser (or client) that the response body is JSON.
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(payload),
     });
     if (res.ok) {
       console.log("data gone successfully");
@@ -29,24 +35,12 @@ export default function AddCostumerDetail({
   };
 
   return (
-    <div className={styles.background} onClick={() => setAddIsVisible(false)}>
+    <div className={styles.background} onClick={() => setChangeIsVisible(false)}>
       <form
         className={styles.form}
         onSubmit={handleSubmit(onSubmit)}
         onClick={(e) => e.stopPropagation()} //! StopPropagation is doing here -> stopping any event on CLICK in from.
       >
-        <input
-          placeholder="Enter customer name"
-          className={styles.input}
-          type="text"
-          {...register("name", {required: true})}
-        />
-        <input
-          placeholder="Amount"
-          className={styles.input}
-          type="number"
-          {...register("amount", {required: true})}
-        />
         <div className={styles.status}>
           <input
             type="radio"

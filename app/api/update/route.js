@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 
 export async function POST(request) {
   const ordersWaleBhiya = new MongoClient(
@@ -13,7 +13,11 @@ export async function POST(request) {
     const collection = db.collection("orders");
 
     const data = await request.json();
-    await collection.insertOne(data);
+
+    await collection.updateOne(
+      { _id: new ObjectId(data.itemID) },
+      { $set: {status: data.status} }
+    );
 
     return NextResponse.json({ success: true }); // Next response is a class of (server)--> a library of nextjs handling server side functions.
   } catch (error) {
