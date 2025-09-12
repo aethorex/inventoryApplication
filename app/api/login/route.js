@@ -10,7 +10,7 @@ export async function POST(request) {
     await loginWaleBhiya.connect();
 
     const db = loginWaleBhiya.db("inventory");
-    const collection = db.collection("shopUser");
+    const collection = db.collection("users");
 
     const data = await request.json();
     const user = await collection.findOne(data);

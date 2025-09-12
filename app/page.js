@@ -5,34 +5,39 @@ import ChangeStatus from "@/components/changeStatus/ChangeStatus";
 import { useState, useEffect } from "react";
 
 export default function Home() {
-  const [addIsVisible, setAddIsVisible] = useState(false);
-  const [changeIsVisible, setChangeIsVisible] = useState(false);
-  const [orders, setOrders] = useState([]); // orders = array
-  const [selectedOrderId, setSelectedOrderId] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState();
+  // const [addIsVisible, setAddIsVisible] = useState(false);
+  // const [changeIsVisible, setChangeIsVisible] = useState(false);
+  // const [orders, setOrders] = useState([]); // orders = array
+  // const [selectedOrderId, setSelectedOrderId] = useState(null);
+  // const [loading, setLoading] = useState(true);
 
-  const fetchOrders = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("./api/getOrders"); // automatically calls GET
-      const data = await res.json();
-      if (data.success) {
-        setOrders(data.allData);
-      }
-    } catch (err) {
-      console.error("Error fetching orders:", err);
-    } finally {
-      setLoading(false); // stop loading
+  // const fetchOrders = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const res = await fetch("./api/getOrders"); // automatically calls GET
+  //     const data = await res.json();
+  //     if (data.success) {
+  //       setOrders(data.allData);
+  //     }
+  //   } catch (err) {
+  //     console.error("Error fetching orders:", err);
+  //   } finally {
+  //     setLoading(false); // stop loading
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchOrders();
+  // }, []);
+
+  useEffect(() => {
+    const user = localStorage.getItem("number");
+    if (user) {
+      setUser(user);
+      console.log(user);
     }
-  };
-
-  useEffect(() => {
-    fetchOrders();
   }, []);
-
-  useEffect(() => {
-    console.log(orders);
-  }, [orders]);
 
   return (
     <>
@@ -83,7 +88,7 @@ export default function Home() {
               Recent Order of Costumer{"  "}
               <button
                 className={styles.button}
-                onClick={() => setAddIsVisible(true)}
+                // onClick={() => setAddIsVisible(true)}
               >
                 <span className={styles.spanmother}>
                   <span>A</span>
@@ -99,7 +104,7 @@ export default function Home() {
                 </span>
               </button>
             </h1>
-            {addIsVisible && (
+            {/* {addIsVisible && (
               <AddCostumerDetail
                 addIsVisible={addIsVisible}
                 setAddIsVisible={setAddIsVisible}
@@ -113,8 +118,8 @@ export default function Home() {
                 fetchOrders={fetchOrders}
                 itemID={selectedOrderId}
               />
-            )}
-            <div className={styles.ordersOfClient}>
+            )} */}
+            {/* <div className={styles.ordersOfClient}>
               {loading ? (
                 <></>
               ) : (
@@ -135,10 +140,10 @@ export default function Home() {
                           {order.status}{" "}
                           <span
                             className={styles.statusOfOrder}
-                            onClick={() => {
-                              setChangeIsVisible(true);
-                              setSelectedOrderId(order._id);
-                            }}
+                            // onClick={() => {
+                              // setChangeIsVisible(true);
+                              // setSelectedOrderId(order._id);
+                            // }}
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -166,7 +171,7 @@ export default function Home() {
                   </tbody>
                 </table>
               )}
-            </div>
+            </div> */}
           </div>
           <div className={styles.lowItems}>
             <h1>Low items in your shop</h1>

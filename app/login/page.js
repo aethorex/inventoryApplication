@@ -15,10 +15,10 @@ export default function Login() {
       },
       body: JSON.stringify(data),
     });
-    const response = res.json();
+    const response = await res.json();
     if (response.success) {
       console.log(response.user);
-      console.log("data gone successfully");
+      localStorage.setItem("number", response.user.number);
       window.location.href = "/";
     }
   };
@@ -28,10 +28,10 @@ export default function Login() {
       <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
         <h1>Login</h1>
         <input
-          placeholder="Enter Shop Name"
+          placeholder="Enter Mobile Number"
           className={styles.input}
-          type="text"
-          {...register("name", { required: true })}
+          type="number"
+          {...register("number", { required: true })}
         />
         <input
           placeholder="Enter shop password"
@@ -50,3 +50,5 @@ export default function Login() {
     </div>
   );
 }
+
+// localStorage.setItem("number", number);
