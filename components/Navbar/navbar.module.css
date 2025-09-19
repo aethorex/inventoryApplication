@@ -19,7 +19,7 @@
   text-align: center;
 }
 
-.login a {
+.login * {
   text-decoration: none;
   color: #799EFF;
 }

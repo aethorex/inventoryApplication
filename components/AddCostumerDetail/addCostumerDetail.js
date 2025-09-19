@@ -4,24 +4,29 @@ import styles from "./addCostumerDetail.module.css";
 import { useForm } from "react-hook-form";
 
 export default function AddCostumerDetail({
-  addIsVisible,
   setAddIsVisible,
   fetchOrders,
+  user
 }) {
   const { register, handleSubmit } = useForm();
 
   const onSubmit = async (data) => {
     setAddIsVisible(false);
 
-    //fetch
-    const res = await fetch("/api/orders", {
+    const payload = {
+      ...data,
+      number: user, // 👈 include user here
+    };
+
+    // fetch
+    const res = await fetch("/api/addOrder", {
       method: "POST",
       headers: {
-        //object sets HTTP headers for your response.
-        "Content-Type": "application/json", //tells the browser (or client) that the response body is JSON.
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(payload),
     });
+
     if (res.ok) {
       console.log("data gone successfully");
     }
@@ -33,26 +38,26 @@ export default function AddCostumerDetail({
       <form
         className={styles.form}
         onSubmit={handleSubmit(onSubmit)}
-        onClick={(e) => e.stopPropagation()} //! StopPropagation is doing here -> stopping any event on CLICK in from.
+        onClick={(e) => e.stopPropagation()} // StopPropagation is doing here -> stopping any event on CLICK in from.
       >
         <input
           placeholder="Enter customer name"
           className={styles.input}
           type="text"
-          {...register("name", {required: true})}
+          {...register("name", { required: true })}
         />
         <input
           placeholder="Amount"
           className={styles.input}
           type="number"
-          {...register("amount", {required: true})}
+          {...register("amount", { required: true })}
         />
         <div className={styles.status}>
           <input
             type="radio"
             id="tbd"
             value="To be Delivered"
-            {...register("status", {required: true})}
+            {...register("status", { required: true })}
           />
           <label htmlFor="tbd"> To be Delivered</label>
           <br />
@@ -60,7 +65,7 @@ export default function AddCostumerDetail({
             type="radio"
             id="progress"
             value="progress"
-            {...register("status", {required: true})}
+            {...register("status", { required: true })}
           />
           <label htmlFor="progress"> Delivery in Progress</label>
           <br />
@@ -68,7 +73,7 @@ export default function AddCostumerDetail({
             type="radio"
             id="delivered"
             value="delivered"
-            {...register("status", {required: true})}
+            {...register("status", { required: true })}
           />
           <label htmlFor="delivered"> Delivered</label>
         </div>

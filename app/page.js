@@ -6,30 +6,36 @@ import { useState, useEffect } from "react";
 
 export default function Home() {
   const [user, setUser] = useState();
-  // const [addIsVisible, setAddIsVisible] = useState(false);
-  // const [changeIsVisible, setChangeIsVisible] = useState(false);
-  // const [orders, setOrders] = useState([]); // orders = array
-  // const [selectedOrderId, setSelectedOrderId] = useState(null);
-  // const [loading, setLoading] = useState(true);
+  const [addIsVisible, setAddIsVisible] = useState(false);
+  const [changeIsVisible, setChangeIsVisible] = useState(false);
+  const [orders, setOrders] = useState([]); // orders = array
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // const fetchOrders = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const res = await fetch("./api/getOrders"); // automatically calls GET
-  //     const data = await res.json();
-  //     if (data.success) {
-  //       setOrders(data.allData);
-  //     }
-  //   } catch (err) {
-  //     console.error("Error fetching orders:", err);
-  //   } finally {
-  //     setLoading(false); // stop loading
-  //   }
-  // };
+  const fetchOrders = async () => {
+    if (!user) return;
+    setLoading(true);
+    try {
+      const res = await fetch("/api/getOrders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ number: user }),
+      });
+      const data = await res.json();
 
-  // useEffect(() => {
-  //   fetchOrders();
-  // }, []);
+      if (data.success) {
+        setOrders(data.orders);
+      }
+    } catch (err) {
+      console.error("Error fetching orders:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, [user]);
 
   useEffect(() => {
     const user = localStorage.getItem("number");
@@ -88,7 +94,7 @@ export default function Home() {
               Recent Order of Costumer{"  "}
               <button
                 className={styles.button}
-                // onClick={() => setAddIsVisible(true)}
+                onClick={() => setAddIsVisible(true)}
               >
                 <span className={styles.spanmother}>
                   <span>A</span>
@@ -104,22 +110,22 @@ export default function Home() {
                 </span>
               </button>
             </h1>
-            {/* {addIsVisible && (
+            {addIsVisible && (
               <AddCostumerDetail
-                addIsVisible={addIsVisible}
                 setAddIsVisible={setAddIsVisible}
                 fetchOrders={fetchOrders}
+                user={user}
               />
             )}
             {changeIsVisible && (
               <ChangeStatus
-                changeIsVisible={changeIsVisible}
                 setChangeIsVisible={setChangeIsVisible}
                 fetchOrders={fetchOrders}
                 itemID={selectedOrderId}
+                user={user}
               />
-            )} */}
-            {/* <div className={styles.ordersOfClient}>
+            )}
+            <div className={styles.ordersOfClient}>
               {loading ? (
                 <></>
               ) : (
@@ -132,18 +138,18 @@ export default function Home() {
                     </tr>
                   </thead>
                   <tbody>
-                    {orders.map((order) => (
-                      <tr key={order._id}>
-                        <td>{order.name}</td>
-                        <td>{order.amount}</td>
+                    {Object.entries(orders).map(([name, details]) => (
+                      <tr key={name}>
+                        <td>{name}</td>
+                        <td>{details.amount}</td>
                         <td>
-                          {order.status}{" "}
+                          {details.status}{" "}
                           <span
                             className={styles.statusOfOrder}
-                            // onClick={() => {
-                              // setChangeIsVisible(true);
-                              // setSelectedOrderId(order._id);
-                            // }}
+                            onClick={() => {
+                              setChangeIsVisible(true);
+                              setSelectedOrderId(name);
+                            }}
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -171,7 +177,7 @@ export default function Home() {
                   </tbody>
                 </table>
               )}
-            </div> */}
+            </div>
           </div>
           <div className={styles.lowItems}>
             <h1>Low items in your shop</h1>

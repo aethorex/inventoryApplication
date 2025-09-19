@@ -4,10 +4,10 @@ import styles from "./changeStatus.module.css";
 import { useForm } from "react-hook-form";
 
 export default function ChangeStatus({
-  changeIsVisible,
   setChangeIsVisible,
   fetchOrders,
   itemID,
+  user
 }) {
   const { register, handleSubmit } = useForm();
 
@@ -17,6 +17,7 @@ export default function ChangeStatus({
     const payload = {
       ...data,
       itemID,
+      number: user
     };
 
     //fetch

@@ -7,9 +7,9 @@ export async function POST(request) {
   );
 
   try {
-    const { number, itemID, status } = await request.json();
+    const { number, name, amount, status } = await request.json();
 
-    if (!number || !itemID || !status) {
+    if (!number || !name || !status) {
       return NextResponse.json({
         success: false,
         error: "Missing number, itemID, or status",
@@ -23,7 +23,8 @@ export async function POST(request) {
 
     await collection.updateOne(
       {}, // only one document per collection
-      { $set: { [`orders.${itemID}.status`]: status } }
+      { $set: { [`orders.${name}`]: { amount, status } } },
+      { upsert: true }
     );
 
     return NextResponse.json({ success: true });
