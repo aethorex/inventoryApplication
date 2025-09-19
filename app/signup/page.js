@@ -4,7 +4,7 @@ import styles from "./signup.module.css";
 import { useForm } from "react-hook-form";
 
 export default function Signup() {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, formState: { isSubmitting } } = useForm();
 
   const onSubmit = async (data) => {
     const res = await fetch("/api/signup", {
@@ -43,8 +43,8 @@ export default function Signup() {
           type="password"
           {...register("pass", { required: true })}
         />
-        <button type="submit" className={styles.button}>
-          Submit
+        <button type="submit" className={styles.button} disabled={isSubmitting}>
+          {isSubmitting ? "Submitting..." : "Submit"}
         </button>
       </form>
     </div>

@@ -8,7 +8,7 @@ export default function AddCostumerDetail({
   fetchOrders,
   user
 }) {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, formState: { isSubmitting } } = useForm();
 
   const onSubmit = async (data) => {
     setAddIsVisible(false);
@@ -77,8 +77,8 @@ export default function AddCostumerDetail({
           />
           <label htmlFor="delivered"> Delivered</label>
         </div>
-        <button type="submit" className={styles.button}>
-          Submit
+        <button type="submit" className={styles.button} disabled={isSubmitting}>
+          {isSubmitting ? "Submitting..." : "Submit"}
         </button>
       </form>
     </div>

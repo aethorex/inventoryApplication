@@ -9,7 +9,7 @@ export default function ChangeStatus({
   itemID,
   user
 }) {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, formState: { isSubmitting } } = useForm();
 
   const onSubmit = async (data) => {
     setChangeIsVisible(false);
@@ -40,7 +40,7 @@ export default function ChangeStatus({
       <form
         className={styles.form}
         onSubmit={handleSubmit(onSubmit)}
-        onClick={(e) => e.stopPropagation()} //! StopPropagation is doing here -> stopping any event on CLICK in from.
+        onClick={(e) => e.stopPropagation()} // StopPropagation is doing here -> stopping any event on CLICK in from.
       >
         <div className={styles.status}>
           <input
@@ -67,8 +67,8 @@ export default function ChangeStatus({
           />
           <label htmlFor="delivered"> Delivered</label>
         </div>
-        <button type="submit" className={styles.button}>
-          Submit
+        <button type="submit" className={styles.button} disabled={isSubmitting}>
+          {isSubmitting ? "Submitting..." : "Submit"}
         </button>
       </form>
     </div>

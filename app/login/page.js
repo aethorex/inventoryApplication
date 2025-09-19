@@ -4,7 +4,7 @@ import styles from "./login.module.css";
 import { useForm } from "react-hook-form";
 
 export default function Login() {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, formState: { isSubmitting } } = useForm();
 
   const onSubmit = async (data) => {
     const res = await fetch("/api/login", {
@@ -39,8 +39,8 @@ export default function Login() {
           type="password"
           {...register("pass", { required: true })}
         />
-        <button type="submit" className={styles.button}>
-          Submit
+        <button type="submit" className={styles.button} disabled={isSubmitting}>
+          {isSubmitting ? "Submitting..." : "Submit"}
         </button>
         <br />
         <p>
