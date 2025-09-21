@@ -1,10 +1,12 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import styles from "./navbar.module.css";
 
 export default function NavBar() {
   const [user, setUser] = useState(null);
+  const pathname = usePathname();
 
   //find user (you can use this to anywhere to find the loggedin user data)
   useEffect(() => {
@@ -27,6 +29,22 @@ export default function NavBar() {
     }
   }, []);
 
+  if (pathname == '/products') return (
+    <nav className={styles.nav}>
+      <div className={styles.login}>
+        <h1>
+          {user ? (
+            <>{user.name}</>
+          ) : (
+            <a href="/login">Login</a>
+          )}
+        </h1>
+      </div>
+      <div className={styles.search}>
+        <h1>Search...</h1>
+      </div>
+    </nav>
+  );
   return (
     <nav className={styles.nav}>
       <div className={styles.login}>
