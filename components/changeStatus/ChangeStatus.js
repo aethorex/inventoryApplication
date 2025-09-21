@@ -7,7 +7,8 @@ export default function ChangeStatus({
   setChangeIsVisible,
   fetchOrders,
   itemID,
-  user
+  user,
+  setLoading
 }) {
   const { register, handleSubmit, formState: { isSubmitting } } = useForm();
 
@@ -21,6 +22,7 @@ export default function ChangeStatus({
     };
 
     //fetch
+    setLoading(true);
     const res = await fetch("/api/update", {
       method: "POST",
       headers: {
@@ -29,9 +31,6 @@ export default function ChangeStatus({
       },
       body: JSON.stringify(payload),
     });
-    if (res.ok) {
-      console.log("data gone successfully");
-    }
     fetchOrders();
   };
 

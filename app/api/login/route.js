@@ -15,7 +15,11 @@ export async function POST(request) {
     const data = await request.json();
     const user = await collection.findOne(data);
 
-    return NextResponse.json({ success: true, user });
+    if (user){
+      return NextResponse.json({ success: true, user });
+    } else {
+      return NextResponse.json({ success: false });
+    }
   } catch (error) {
     console.error("Error parsing request:", error);
     return NextResponse.json({ success: false });

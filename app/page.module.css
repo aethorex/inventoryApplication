@@ -255,3 +255,12 @@
 .statusOfOrder svg:hover{
   background-color: rgba(0, 0, 0, 0.2);
 }
+
+.specialTD {
+  display: flex;
+  flex-direction: column;
+}
+
+.specialTD span svg {
+  height: 20px;
+}

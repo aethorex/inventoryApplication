@@ -7,10 +7,13 @@ export async function POST(request) {
   );
 
   try {
-    const { number } = await request.json();
+    const { number, name } = await request.json();
 
-    if (!number) {
-      return NextResponse.json({ success: false, error: "Number required" });
+    if (!number || !name) {
+      return NextResponse.json({
+        success: false,
+        error: "Missing number, name",
+      });
     }
 
     await client.connect();
@@ -18,13 +21,14 @@ export async function POST(request) {
     const db = client.db("inventory");
     const collection = db.collection(number);
 
-    const document = await collection.findOne({});
+    await collection.updateOne(
+      {}, // only one document per collection
+      { $unset: { [`orders.${name}`]: "" } },
+    );
 
-    const orders = document?.orders || [];
-
-    return NextResponse.json({ success: true, orders });
+    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error fetching orders:", error);
+    console.error("Error updating order status:", error);
     return NextResponse.json({ success: false, error: error.message });
   } finally {
     await client.close();

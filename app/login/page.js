@@ -17,9 +17,10 @@ export default function Login() {
     });
     const response = await res.json();
     if (response.success) {
-      console.log(response.user);
       localStorage.setItem("number", response.user.number);
       window.location.href = "/";
+    } else {
+      alert('wrong Number or Password');
     }
   };
 

@@ -6,7 +6,8 @@ import { useForm } from "react-hook-form";
 export default function AddCostumerDetail({
   setAddIsVisible,
   fetchOrders,
-  user
+  user,
+  setLoading
 }) {
   const { register, handleSubmit, formState: { isSubmitting } } = useForm();
 
@@ -19,6 +20,7 @@ export default function AddCostumerDetail({
     };
 
     // fetch
+    setLoading(true);
     const res = await fetch("/api/addOrder", {
       method: "POST",
       headers: {

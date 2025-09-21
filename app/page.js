@@ -14,7 +14,6 @@ export default function Home() {
 
   const fetchOrders = async () => {
     if (!user) return;
-    setLoading(true);
     try {
       const res = await fetch("/api/getOrders", {
         method: "POST",
@@ -41,109 +40,132 @@ export default function Home() {
     const user = localStorage.getItem("number");
     if (user) {
       setUser(user);
-      console.log(user);
     }
   }, []);
 
-  return (
-    <>
-      <div className={styles.content}>
-        <div className={styles.mainContainer}>
-          <div className={styles.card}>
-            <div className={styles.cardHeader}>
-              <span className={styles.cardIcon}>📦</span>
-              <h2 className={styles.cardTitle}>Total Products</h2>
-            </div>
-            <div className={styles.cardValue}>10</div>
-          </div>
+  // delete order
+  async function handleDelete(name) {
+    setLoading(true);
+    const payload = {
+      name,
+      number: user
+    };
 
-          {/* Low Stock Items */}
-          <div className={`${styles.card} ${styles.lowStockCard}`}>
-            <div className={styles.cardHeader}>
-              <span className={styles.cardIcon}>🏷️</span>
-              <h2 className={styles.cardTitle}>Low Stock Items</h2>
-            </div>
-            <div className={styles.cardValue}>8</div>
-            <div className={styles.cardAlert}>
-              <span className={styles.alertIcon}>⚠️</span>
-              <span>3 items critically low!</span>
-            </div>
-          </div>
+    const res = await fetch("/api/delete", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+    if (res.ok) {
+      console.log("data gone successfully");
+    }
+    fetchOrders();
+  };
 
-          {/* Total Stock Value */}
-          <div className={`${styles.card} ${styles.totalStock}`}>
-            <div className={styles.cardHeader}>
-              <span className={styles.cardIcon}>💰</span>
-              <h2 className={styles.cardTitle}>Total Stock Value</h2>
-            </div>
-            <div className={styles.cardValue}>value</div>
+return (
+  <>
+    <div className={styles.content}>
+      <div className={styles.mainContainer}>
+        <div className={styles.card}>
+          <div className={styles.cardHeader}>
+            <span className={styles.cardIcon}>📦</span>
+            <h2 className={styles.cardTitle}>Total Products</h2>
           </div>
+          <div className={styles.cardValue}>10</div>
+        </div>
 
-          <div className={`${styles.card} ${styles.totalStock}`}>
-            <div className={styles.cardHeader}>
-              <span className={styles.cardIcon}>💰</span>
-              <h2 className={styles.cardTitle}>Total Stock Value</h2>
-            </div>
-            <div className={styles.cardValue}>value</div>
+        {/* Low Stock Items */}
+        <div className={`${styles.card} ${styles.lowStockCard}`}>
+          <div className={styles.cardHeader}>
+            <span className={styles.cardIcon}>🏷️</span>
+            <h2 className={styles.cardTitle}>Low Stock Items</h2>
+          </div>
+          <div className={styles.cardValue}>8</div>
+          <div className={styles.cardAlert}>
+            <span className={styles.alertIcon}>⚠️</span>
+            <span>3 items critically low!</span>
           </div>
         </div>
 
-        <div className={styles.recentOrderAndLowItems}>
-          <div className={styles.recentOrder}>
-            <h1 className={styles.recentOrders}>
-              Recent Order of Costumer{"  "}
-              <button
-                className={styles.button}
-                onClick={() => setAddIsVisible(true)}
-              >
-                <span className={styles.spanmother}>
-                  <span>A</span>
-                  <span>d</span>
-                  <span>d</span>
-                </span>
-                <span className={styles.spanmother2}>
-                  <span>O</span>
-                  <span>r</span>
-                  <span>d</span>
-                  <span>e</span>
-                  <span>r</span>
-                </span>
-              </button>
-            </h1>
-            {addIsVisible && (
-              <AddCostumerDetail
-                setAddIsVisible={setAddIsVisible}
-                fetchOrders={fetchOrders}
-                user={user}
-              />
-            )}
-            {changeIsVisible && (
-              <ChangeStatus
-                setChangeIsVisible={setChangeIsVisible}
-                fetchOrders={fetchOrders}
-                itemID={selectedOrderId}
-                user={user}
-              />
-            )}
-            <div className={styles.ordersOfClient}>
-              {loading ? (
-                <></>
-              ) : (
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Amount</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Object.entries(orders).map(([name, details]) => (
-                      <tr key={name}>
-                        <td>{name}</td>
-                        <td>{details.amount}</td>
-                        <td>
-                          {details.status}{" "}
+        {/* Total Stock Value */}
+        <div className={`${styles.card} ${styles.totalStock}`}>
+          <div className={styles.cardHeader}>
+            <span className={styles.cardIcon}>💰</span>
+            <h2 className={styles.cardTitle}>Total Stock Value</h2>
+          </div>
+          <div className={styles.cardValue}>value</div>
+        </div>
+
+        <div className={`${styles.card} ${styles.totalStock}`}>
+          <div className={styles.cardHeader}>
+            <span className={styles.cardIcon}>💰</span>
+            <h2 className={styles.cardTitle}>Total Stock Value</h2>
+          </div>
+          <div className={styles.cardValue}>value</div>
+        </div>
+      </div>
+
+      <div className={styles.recentOrderAndLowItems}>
+        <div className={styles.recentOrder}>
+          <h1 className={styles.recentOrders}>
+            Orders{"  "}
+            <button
+              className={styles.button}
+              onClick={() => setAddIsVisible(true)}
+            >
+              <span className={styles.spanmother}>
+                <span>A</span>
+                <span>d</span>
+                <span>d</span>
+              </span>
+              <span className={styles.spanmother2}>
+                <span>O</span>
+                <span>r</span>
+                <span>d</span>
+                <span>e</span>
+                <span>r</span>
+              </span>
+            </button>
+          </h1>
+          {addIsVisible && (
+            <AddCostumerDetail
+              setAddIsVisible={setAddIsVisible}
+              fetchOrders={fetchOrders}
+              user={user}
+              setLoading={setLoading}
+            />
+          )}
+          {changeIsVisible && (
+            <ChangeStatus
+              setChangeIsVisible={setChangeIsVisible}
+              fetchOrders={fetchOrders}
+              itemID={selectedOrderId}
+              user={user}
+              setLoading={setLoading}
+            />
+          )}
+          <div className={styles.ordersOfClient}>
+            {loading ? (
+              <></>
+            ) : (
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(orders).map(([name, details]) => (
+                    <tr key={name}>
+                      <td>{name}</td>
+                      <td>{details.amount}</td>
+                      <td className={styles.specialTD}>
+                        {details.status}{" "}
+                        <div className="actionbtns">
                           <span
                             className={styles.statusOfOrder}
                             onClick={() => {
@@ -171,19 +193,52 @@ export default function Home() {
                               Change Status
                             </svg>
                           </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-            </div>
-          </div>
-          <div className={styles.lowItems}>
-            <h1>Low items in your shop</h1>
+                          <span
+                            className={styles.statusOfOrder}
+                            onClick={() => {
+                              handleDelete(name);
+                            }}
+                            style={{ color: "red", cursor: "pointer" }}
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              xmlnsXlink="http://www.w3.org/1999/xlink"
+                              version="1.1"
+                              id="Capa_1"
+                              viewBox="0 0 488.936 488.936"
+                              width="28"
+                              height="28"
+                              fill="red"
+                            >
+                              <title id="deleteTitle">Delete</title>
+                              <g>
+                                <g>
+                                  <path d="M381.16,111.948H107.376c-6.468,0-12.667,2.819-17.171,7.457c-4.504,4.649-6.934,11.014-6.738,17.477l9.323,307.69
+          c0.39,12.92,10.972,23.312,23.903,23.312h20.136v-21.012c0-24.121,19.368-44.049,43.488-44.049h127.896
+          c24.131,0,43.893,19.928,43.893,44.049v21.012h19.73c12.933,0,23.52-10.346,23.913-23.268l9.314-307.7
+          c0.195-6.462-2.234-12.863-6.738-17.513C393.821,114.767,387.634,111.948,381.16,111.948z"/>
+                                  <path d="M309.166,435.355H181.271c-6.163,0-11.915,4.383-11.915,11.516v30.969c0,6.672,5.342,11.096,11.915,11.096h127.895
+          c6.323,0,11.366-4.773,11.366-11.096v-30.969C320.532,440.561,315.489,435.355,309.166,435.355z"/>
+                                  <path d="M427.696,27.106C427.696,12.138,415.563,0,400.591,0H88.344C73.372,0,61.239,12.138,61.239,27.106v30.946
+          c0,14.973,12.133,27.106,27.105,27.106H400.59c14.973,0,27.105-12.133,27.105-27.106L427.696,27.106L427.696,27.106z"/>
+                                </g>
+                              </g>
+                            </svg>
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
+        <div className={styles.lowItems}>
+          <h1>Low items in your shop</h1>
+        </div>
       </div>
-    </>
-  );
+    </div >
+  </>
+);
 }
