@@ -15,7 +15,7 @@ export default function SideMenu() {
           <Link href="/report">Report</Link>
         </li>
         <li>
-          <Link href="/settings">Settings</Link>
+          <Link href="/settings">Guide</Link>
         </li>
       </ul>
     </div>

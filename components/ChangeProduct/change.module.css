@@ -15,7 +15,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px;
   padding: 30px;
   background: linear-gradient(to bottom, #799EFF, #799EFF);
   border-radius: 10px;
@@ -28,6 +28,16 @@
     rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
   animation: form-animation 0.5s ease-in-out;
   z-index: 20;
+}
+
+.form label b {
+  color: #fff;
+}
+
+.form div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 @keyframes form-animation {

@@ -52,18 +52,28 @@ export default function ChangeProduct({
         onSubmit={handleSubmit(onSubmit)}
         onClick={(e) => e.stopPropagation()}
       >
-        <input
-          placeholder="Stock"
-          className={styles.input}
-          type="number"
-          {...register("stock", { valueAsNumber: true, required: true })}
-        />
-        <input
-          placeholder="Price"
-          className={styles.input}
-          type="number"
-          {...register("price", { valueAsNumber: true, required: true })}
-        />
+        <div>
+          <label htmlFor="stock"><b>Stock </b></label>
+          <input
+            placeholder="Stock"
+            className={styles.input}
+            type="number"
+            name="stock"
+            {...register("stock", { valueAsNumber: true, required: true })}
+          />
+        </div>
+        
+        <div>
+          <label htmlFor="price"><b>Price </b></label>
+          <input
+            placeholder="Price"
+            className={styles.input}
+            type="number"
+            name="price"
+            {...register("price", { valueAsNumber: true, required: true })}
+          />
+        </div>
+
         <button type="submit" className={styles.button} disabled={isSubmitting}>
           {isSubmitting ? "Submitting..." : "Submit"}
         </button>
