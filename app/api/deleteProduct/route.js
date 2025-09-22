@@ -7,27 +7,23 @@ export async function POST(request) {
   );
 
   try {
-    const { number, name, price, stock } = await request.json();
+    const { number, selectedProduct } = await request.json();
 
-
-    if (!number || !name || !price) {
+    if (!number || !selectedProduct) {
       return NextResponse.json({
         success: false,
-        error: "Missing number, name, or price",
+        error: "Missing number, name",
       });
     }
 
-    const rename = name.toLowerCase().trim();
-    
     await client.connect();
 
     const db = client.db("inventory");
     const collection = db.collection(number);
 
     await collection.updateOne(
-      {},
-      { $set: { [`products.${rename}`]: { stock, price } } },
-      { upsert: true }
+      {}, // only one document per collection
+      { $unset: { [`products.${selectedProduct}`]: "" } },
     );
 
     return NextResponse.json({ success: true });

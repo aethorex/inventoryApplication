@@ -148,7 +148,7 @@ return (
           )}
           <div className={styles.ordersOfClient}>
             {loading ? (
-              <></>
+              <h1>Loading...</h1>
             ) : (
               <table>
                 <thead>

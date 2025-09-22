@@ -27,7 +27,6 @@ export async function POST(request) {
     await collection.updateOne(
       {},
       { $set: { [`products.${rename}`]: { stock, price } } },
-      { upsert: true }
     );
 
     return NextResponse.json({ success: true });
