@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 export default function ChangeStatus({
   setChangeIsVisible,
   fetchOrders,
+  fetchProducts,
   itemID,
   user,
   setLoading
@@ -32,6 +33,7 @@ export default function ChangeStatus({
       body: JSON.stringify(payload),
     });
     fetchOrders();
+    fetchProducts();
   };
 
   return (

@@ -9,9 +9,14 @@ export default function Home() {
   const [addIsVisible, setAddIsVisible] = useState(false);
   const [changeIsVisible, setChangeIsVisible] = useState(false);
   const [orders, setOrders] = useState([]); // orders = array
+  const [lowStockProducts, setLowStockProducts] = useState([]);
+  const [lowStockCount, setLowStockCount] = useState(0);
+  const [totalProductsCount, setTotalProductsCount] = useState(0);
+  const [totalStockValue, setTotalStockValue] = useState(0);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // get orders
   const fetchOrders = async () => {
     if (!user) return;
     try {
@@ -32,10 +37,51 @@ export default function Home() {
     }
   };
 
+  // get products and low stocks
+  const fetchProducts = async () => {
+    if (!user) return;
+    try {
+      const res = await fetch("/api/getProducts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ number: user }),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        //total products
+        const totalCount = Object.keys(data.products).length;
+        setTotalProductsCount(totalCount);
+
+        //total stock value
+        let stockValue = 0;
+        Object.entries(data.products).forEach(([_, details]) => {
+          stockValue += details.price * details.stock;
+        });
+        setTotalStockValue(stockValue);
+
+        //fetch low stock products
+        const lowStock = Object.fromEntries(
+          Object.entries(data.products).filter(([_, details]) => details.stock <= 10)
+        );
+
+        setLowStockProducts(lowStock);
+        setLowStockCount(Object.keys(lowStock).length); //count of low stock products
+      }
+    } catch (err) {
+      console.error("Error fetching orders:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // refresh products and orders
   useEffect(() => {
     fetchOrders();
+    fetchProducts();
   }, [user]);
 
+  // get user
   useEffect(() => {
     const user = localStorage.getItem("number");
     if (user) {
@@ -62,183 +108,197 @@ export default function Home() {
       console.log("data gone successfully");
     }
     fetchOrders();
+    fetchProducts();
   };
 
-return (
-  <>
-    <div className={styles.content}>
-      <div className={styles.mainContainer}>
-        <div className={styles.card}>
-          <div className={styles.cardHeader}>
-            <span className={styles.cardIcon}>📦</span>
-            <h2 className={styles.cardTitle}>Total Products</h2>
+  return (
+    <>
+      <div className={styles.content}>
+        <div className={styles.mainContainer}>
+          <div className={styles.card}>
+            <div className={styles.cardHeader}>
+              <span className={styles.cardIcon}>📦</span>
+              <h2 className={styles.cardTitle}>Total Products</h2>
+            </div>
+            <div className={styles.cardValue}>{totalProductsCount}</div>
           </div>
-          <div className={styles.cardValue}>10</div>
+
+          {/* Low Stock Items */}
+          <div className={`${styles.card} ${styles.lowStockCard}`}>
+            <div className={styles.cardHeader}>
+              <span className={styles.cardIcon}>🏷️</span>
+              <h2 className={styles.cardTitle}>Low Stock Items</h2>
+            </div>
+            <div className={styles.cardValue}>{lowStockCount}</div>
+          </div>
+
+          {/* Total Stock Value */}
+          <div className={`${styles.card} ${styles.totalStock}`}>
+            <div className={styles.cardHeader}>
+              <span className={styles.cardIcon}>💰</span>
+              <h2 className={styles.cardTitle}>Total Stock Value</h2>
+            </div>
+            <div className={styles.cardValue}>{totalStockValue}</div>
+          </div>
         </div>
 
-        {/* Low Stock Items */}
-        <div className={`${styles.card} ${styles.lowStockCard}`}>
-          <div className={styles.cardHeader}>
-            <span className={styles.cardIcon}>🏷️</span>
-            <h2 className={styles.cardTitle}>Low Stock Items</h2>
-          </div>
-          <div className={styles.cardValue}>8</div>
-          <div className={styles.cardAlert}>
-            <span className={styles.alertIcon}>⚠️</span>
-            <span>3 items critically low!</span>
-          </div>
-        </div>
-
-        {/* Total Stock Value */}
-        <div className={`${styles.card} ${styles.totalStock}`}>
-          <div className={styles.cardHeader}>
-            <span className={styles.cardIcon}>💰</span>
-            <h2 className={styles.cardTitle}>Total Stock Value</h2>
-          </div>
-          <div className={styles.cardValue}>value</div>
-        </div>
-
-        <div className={`${styles.card} ${styles.totalStock}`}>
-          <div className={styles.cardHeader}>
-            <span className={styles.cardIcon}>💰</span>
-            <h2 className={styles.cardTitle}>Total Stock Value</h2>
-          </div>
-          <div className={styles.cardValue}>value</div>
-        </div>
-      </div>
-
-      <div className={styles.recentOrderAndLowItems}>
-        <div className={styles.recentOrder}>
-          <h1 className={styles.recentOrders}>
-            Orders{"  "}
-            <button
-              className={styles.button}
-              onClick={() => setAddIsVisible(true)}
-            >
-              <span className={styles.spanmother}>
-                <span>A</span>
-                <span>d</span>
-                <span>d</span>
-              </span>
-              <span className={styles.spanmother2}>
-                <span>O</span>
-                <span>r</span>
-                <span>d</span>
-                <span>e</span>
-                <span>r</span>
-              </span>
-            </button>
-          </h1>
-          {addIsVisible && (
-            <AddCostumerDetail
-              setAddIsVisible={setAddIsVisible}
-              fetchOrders={fetchOrders}
-              user={user}
-              setLoading={setLoading}
-            />
-          )}
-          {changeIsVisible && (
-            <ChangeStatus
-              setChangeIsVisible={setChangeIsVisible}
-              fetchOrders={fetchOrders}
-              itemID={selectedOrderId}
-              user={user}
-              setLoading={setLoading}
-            />
-          )}
-          <div className={styles.ordersOfClient}>
-            {loading ? (
-              <h1>Loading...</h1>
-            ) : (
-              <table>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Amount</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Object.entries(orders).map(([name, details]) => (
-                    <tr key={name}>
-                      <td>{name}</td>
-                      <td>{details.amount}</td>
-                      <td className={styles.specialTD}>
-                        {details.status}{" "}
-                        <div className="actionbtns">
-                          <span
-                            className={styles.statusOfOrder}
-                            onClick={() => {
-                              setChangeIsVisible(true);
-                              setSelectedOrderId(name);
-                            }}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 24 24"
-                              width="28"
-                              height="20"
-                              role="img"
-                              aria-labelledby="swapTitle"
+        <div className={styles.recentOrderAndLowItems}>
+          <div className={styles.recentOrder}>
+            <h1 className={styles.recentOrders}>
+              Orders{"  "}
+              <button
+                className={styles.button}
+                onClick={() => setAddIsVisible(true)}
+              >
+                <span className={styles.spanmother}>
+                  <span>A</span>
+                  <span>d</span>
+                  <span>d</span>
+                </span>
+                <span className={styles.spanmother2}>
+                  <span>O</span>
+                  <span>r</span>
+                  <span>d</span>
+                  <span>e</span>
+                  <span>r</span>
+                </span>
+              </button>
+            </h1>
+            {addIsVisible && (
+              <AddCostumerDetail
+                setAddIsVisible={setAddIsVisible}
+                fetchOrders={fetchOrders}
+                user={user}
+                setLoading={setLoading}
+              />
+            )}
+            {changeIsVisible && (
+              <ChangeStatus
+                setChangeIsVisible={setChangeIsVisible}
+                fetchOrders={fetchOrders}
+                fetchProducts={fetchProducts}
+                itemID={selectedOrderId}
+                user={user}
+                setLoading={setLoading}
+              />
+            )}
+            <div className={styles.ordersOfClient}>
+              {loading ? (
+                <h1>Loading...</h1>
+              ) : (
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Amount</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.entries(orders).map(([name, details]) => (
+                      <tr key={name}>
+                        <td>{name}</td>
+                        <td>{details.amount}</td>
+                        <td className={styles.specialTD}>
+                          {details.status}{" "}
+                          <div className="actionbtns">
+                            <span
+                              className={styles.statusOfOrder}
+                              onClick={() => {
+                                setChangeIsVisible(true);
+                                setSelectedOrderId(name);
+                              }}
                             >
-                              <title id="swapTitle">Change Status</title>
-                              <path
-                                d="M7 7h11l-4-4m4 14H7l4 4"
-                                stroke="currentColor"
-                                fill="none"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                              Change Status
-                            </svg>
-                          </span>
-                          <span
-                            className={styles.statusOfOrder}
-                            onClick={() => {
-                              handleDelete(name);
-                            }}
-                            style={{ color: "red", cursor: "pointer" }}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              xmlnsXlink="http://www.w3.org/1999/xlink"
-                              version="1.1"
-                              id="Capa_1"
-                              viewBox="0 0 488.936 488.936"
-                              width="28"
-                              height="28"
-                              fill="red"
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                width="28"
+                                height="20"
+                                role="img"
+                                aria-labelledby="swapTitle"
+                              >
+                                <title id="swapTitle">Change Status</title>
+                                <path
+                                  d="M7 7h11l-4-4m4 14H7l4 4"
+                                  stroke="currentColor"
+                                  fill="none"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                                Change Status
+                              </svg>
+                            </span>
+                            <span
+                              className={styles.statusOfOrder}
+                              onClick={() => {
+                                handleDelete(name);
+                              }}
+                              style={{ color: "red", cursor: "pointer" }}
                             >
-                              <title id="deleteTitle">Delete</title>
-                              <g>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                xmlnsXlink="http://www.w3.org/1999/xlink"
+                                version="1.1"
+                                id="Capa_1"
+                                viewBox="0 0 488.936 488.936"
+                                width="28"
+                                height="28"
+                                fill="red"
+                              >
+                                <title id="deleteTitle">Delete</title>
                                 <g>
-                                  <path d="M381.16,111.948H107.376c-6.468,0-12.667,2.819-17.171,7.457c-4.504,4.649-6.934,11.014-6.738,17.477l9.323,307.69
+                                  <g>
+                                    <path d="M381.16,111.948H107.376c-6.468,0-12.667,2.819-17.171,7.457c-4.504,4.649-6.934,11.014-6.738,17.477l9.323,307.69
           c0.39,12.92,10.972,23.312,23.903,23.312h20.136v-21.012c0-24.121,19.368-44.049,43.488-44.049h127.896
           c24.131,0,43.893,19.928,43.893,44.049v21.012h19.73c12.933,0,23.52-10.346,23.913-23.268l9.314-307.7
           c0.195-6.462-2.234-12.863-6.738-17.513C393.821,114.767,387.634,111.948,381.16,111.948z"/>
-                                  <path d="M309.166,435.355H181.271c-6.163,0-11.915,4.383-11.915,11.516v30.969c0,6.672,5.342,11.096,11.915,11.096h127.895
+                                    <path d="M309.166,435.355H181.271c-6.163,0-11.915,4.383-11.915,11.516v30.969c0,6.672,5.342,11.096,11.915,11.096h127.895
           c6.323,0,11.366-4.773,11.366-11.096v-30.969C320.532,440.561,315.489,435.355,309.166,435.355z"/>
-                                  <path d="M427.696,27.106C427.696,12.138,415.563,0,400.591,0H88.344C73.372,0,61.239,12.138,61.239,27.106v30.946
+                                    <path d="M427.696,27.106C427.696,12.138,415.563,0,400.591,0H88.344C73.372,0,61.239,12.138,61.239,27.106v30.946
           c0,14.973,12.133,27.106,27.105,27.106H400.59c14.973,0,27.105-12.133,27.105-27.106L427.696,27.106L427.696,27.106z"/>
+                                  </g>
                                 </g>
-                              </g>
-                            </svg>
-                          </span>
-                        </div>
-                      </td>
+                              </svg>
+                            </span>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+          <div className={styles.lowItems}>
+            <h1>Low items in your shop</h1>
+            <div className={styles.ordersOfClient}>
+              {loading ? (
+                <h1>Loading...</h1>
+              ) : (
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Stock</th>
+                      <th>Price</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
+                  </thead>
+                  <tbody>
+                    {Object.entries(lowStockProducts).map(([name, details]) => (
+                      <tr key={name}>
+                        <td>{name}</td>
+                        <td>{details.stock}</td>
+                        <td>{details.price}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
           </div>
         </div>
-        <div className={styles.lowItems}>
-          <h1>Low items in your shop</h1>
-        </div>
-      </div>
-    </div >
-  </>
-);
+      </div >
+    </>
+  );
 }

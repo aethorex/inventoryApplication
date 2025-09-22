@@ -16,6 +16,7 @@ export default function Products() {
   const [price, setPrice] = useState();
   const [stock, setStock] = useState();
 
+  // get products
   const fetchProducts = async () => {
     if (!user) return;
     try {
@@ -36,20 +37,19 @@ export default function Products() {
     }
   };
 
+  // refresh products
   useEffect(() => {
     fetchProducts();
   }, [user]);
 
+  //get user
   useEffect(() => {
     const number = localStorage.getItem("number");
     if (number) setUser(number);
     setReady(true);
   }, []);
 
-  useEffect(() => {
-    console.log(products)
-  }, [products])
-
+  // delete handeling
   async function handleDelete(name) {
     setLoading(true);
     const payload = {
