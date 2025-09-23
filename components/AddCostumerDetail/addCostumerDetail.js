@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 export default function AddCostumerDetail({
   setAddIsVisible,
   fetchOrders,
+  fetchProducts,
   user,
   setLoading
 }) {
@@ -21,18 +22,30 @@ export default function AddCostumerDetail({
 
     // fetch
     setLoading(true);
-    const res = await fetch("/api/addOrder", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+    try {
+      const res = await fetch("/api/addOrder", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
-    if (res.ok) {
-      console.log("data gone successfully");
+      const result = await res.json();
+
+      if (!result.success) {
+        alert(result.error || "Something went wrong");
+      } else {
+        console.log("Order added successfully");
+        fetchOrders();
+        fetchProducts();
+      }
+    } catch (err) {
+      alert("Network error, please try again later.");
+      console.error("Error adding order:", err);
+    } finally {
+      setLoading(false);
     }
-    fetchOrders();
   };
 
   return (
@@ -49,7 +62,13 @@ export default function AddCostumerDetail({
           {...register("name", { required: true })}
         />
         <input
-          placeholder="Amount"
+          placeholder="Enter product name"
+          className={styles.input}
+          type="text"
+          {...register("product", { required: true })}
+        />
+        <input
+          placeholder="Amount of product"
           className={styles.input}
           type="number"
           {...register("amount", { required: true })}

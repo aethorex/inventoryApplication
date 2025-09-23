@@ -168,6 +168,7 @@ export default function Home() {
               <AddCostumerDetail
                 setAddIsVisible={setAddIsVisible}
                 fetchOrders={fetchOrders}
+                fetchProducts={fetchProducts}
                 user={user}
                 setLoading={setLoading}
               />
@@ -198,7 +199,7 @@ export default function Home() {
                     {Object.entries(orders).map(([name, details]) => (
                       <tr key={name}>
                         <td>{name}</td>
-                        <td>{details.amount}</td>
+                        <td>{details.product}</td>
                         <td className={styles.specialTD}>
                           {details.status}{" "}
                           <div className="actionbtns">
