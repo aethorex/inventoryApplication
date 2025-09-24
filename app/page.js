@@ -191,7 +191,7 @@ export default function Home() {
                   <thead>
                     <tr>
                       <th>Name</th>
-                      <th>Amount</th>
+                      <th>Total Price</th>
                       <th>Status</th>
                     </tr>
                   </thead>
@@ -199,7 +199,7 @@ export default function Home() {
                     {Object.entries(orders).map(([name, details]) => (
                       <tr key={name}>
                         <td>{name}</td>
-                        <td>{details.product}</td>
+                        <td>{details.totalPrice ? `₹${details.totalPrice}` : "-"}</td>
                         <td className={styles.specialTD}>
                           {details.status}{" "}
                           <div className="actionbtns">

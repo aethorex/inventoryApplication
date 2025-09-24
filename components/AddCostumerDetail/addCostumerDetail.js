@@ -1,7 +1,7 @@
 "use client";
 
 import styles from "./addCostumerDetail.module.css";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 
 export default function AddCostumerDetail({
   setAddIsVisible,
@@ -10,24 +10,29 @@ export default function AddCostumerDetail({
   user,
   setLoading
 }) {
-  const { register, handleSubmit, formState: { isSubmitting } } = useForm();
+  const { register, handleSubmit, control, formState: { isSubmitting } } = useForm({
+    defaultValues: {
+      items: [{ product: "", quantity: 1 }]
+    }
+  });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "items"
+  });
 
   const onSubmit = async (data) => {
     setAddIsVisible(false);
 
     const payload = {
       ...data,
-      number: user, // 👈 include user here
+      number: user,
     };
 
-    // fetch
     setLoading(true);
     try {
       const res = await fetch("/api/addOrder", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
@@ -36,13 +41,11 @@ export default function AddCostumerDetail({
       if (!result.success) {
         alert(result.error || "Something went wrong");
       } else {
-        console.log("Order added successfully");
         fetchOrders();
         fetchProducts();
       }
     } catch (err) {
       alert("Network error, please try again later.");
-      console.error("Error adding order:", err);
     } finally {
       setLoading(false);
     }
@@ -53,7 +56,7 @@ export default function AddCostumerDetail({
       <form
         className={styles.form}
         onSubmit={handleSubmit(onSubmit)}
-        onClick={(e) => e.stopPropagation()} // StopPropagation is doing here -> stopping any event on CLICK in from.
+        onClick={(e) => e.stopPropagation()}
       >
         <input
           placeholder="Enter customer name"
@@ -61,18 +64,31 @@ export default function AddCostumerDetail({
           type="text"
           {...register("name", { required: true })}
         />
-        <input
-          placeholder="Enter product name"
-          className={styles.input}
-          type="text"
-          {...register("product", { required: true })}
-        />
-        <input
-          placeholder="Amount of product"
-          className={styles.input}
-          type="number"
-          {...register("amount", { required: true })}
-        />
+        <div>
+          {fields.map((item, index) => (
+            <div key={item.id} style={{ display: "flex", gap: "8px", marginBottom: 8 }}>
+              <input
+                placeholder="Item"
+                className={styles.input}
+                type="text"
+                {...register(`items.${index}.product`, { required: true })}
+                style={{ flex: 2 }}
+              />
+              <input
+                placeholder="Qty"
+                className={styles.input}
+                type="number"
+                min={1}
+                {...register(`items.${index}.quantity`, { required: true, min: 1 })}
+                style={{ flex: 1 }}
+              />
+              {fields.length > 1 && (
+                <button className={styles.button} type="button" onClick={() => remove(index)} style={{ color: "red" }}>-</button>
+              )}
+            </div>
+          ))}
+          <button className={styles.button} type="button" onClick={() => append({ product: "", quantity: 1 })}>+ Add Item</button>
+        </div>
         <div className={styles.status}>
           <input
             type="radio"

@@ -7,9 +7,9 @@ export async function POST(request) {
   );
 
   try {
-    const { number, name, amount, status, product } = await request.json();
+    const { number, name, status, items } = await request.json();
 
-    if (!number || !name || !status || !product) {
+    if (!number || !name || !status || !Array.isArray(items) || items.length === 0) {
       return NextResponse.json({
         success: false,
         error: "Missing required fields",
@@ -21,38 +21,54 @@ export async function POST(request) {
     const db = client.db("inventory");
     const collection = db.collection(number);
 
-    // ✅ Check product existence first
-    const rename = product.toLowerCase().trim();
+    // Get current products
     const currentDoc = await collection.findOne({});
-
-    if (!currentDoc?.products?.[rename]) {
+    if (!currentDoc?.products) {
       return NextResponse.json({
         success: false,
-        error: `Product "${product}" does not exist`,
+        error: "No products found",
       });
     }
 
-    // ✅ Product exists → proceed with order + stock update
-    const currentStock = currentDoc.products[rename].stock;
-    const newStock = currentStock - amount;
+    let totalPrice = 0;
+    const updates = {};
+    for (const { product, quantity } of items) {
+      const rename = product.toLowerCase().trim();
+      const prod = currentDoc.products[rename];
+      if (!prod) {
+        return NextResponse.json({
+          success: false,
+          error: `Product "${product}" does not exist`,
+        });
+      }
+      if (prod.stock < quantity) {
+        return NextResponse.json({
+          success: false,
+          error: `Not enough stock for "${product}"`,
+        });
+      }
+      totalPrice += prod.price * quantity;
+      updates[`products.${rename}.stock`] = prod.stock - quantity;
+    }
 
-    // Update order
+    // Save order
     await collection.updateOne(
       {},
-      { $set: { [`orders.${name}`]: { product, status } } },
+      {
+        $set: {
+          [`orders.${name}`]: {
+            items,
+            status,
+            totalPrice,
+          },
+          ...updates
+        }
+      },
       { upsert: true }
     );
 
-    // Update stock
-    await collection.updateOne(
-      {},
-      { $set: { [`products.${rename}.stock`]: newStock } },
-      { upsert: true }
-    );
-
-    return NextResponse.json({ success: true, newStock });
+    return NextResponse.json({ success: true, totalPrice });
   } catch (error) {
-    console.error("Error updating order status:", error);
     return NextResponse.json({ success: false, error: error.message });
   } finally {
     await client.close();
